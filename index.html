@@ -30,15 +30,23 @@
       padding: 16px;
     }
 
-    .controls {
+    .controls, .edit-panel {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
       justify-content: center;
+      align-items: center;
       margin: 14px 0 18px;
     }
 
-    button, select {
+    .edit-panel {
+      background: white;
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    button, select, input {
       border: none;
       border-radius: 10px;
       padding: 10px 12px;
@@ -59,9 +67,13 @@
       background: #b3261e;
     }
 
-    select {
+    select, input {
       background: white;
       border: 1px solid #ccc;
+    }
+
+    .edit-panel input {
+      min-width: 170px;
     }
 
     .notice {
@@ -197,6 +209,13 @@
       td.shift {
         min-width: 48px;
       }
+
+      .edit-panel input,
+      .edit-panel select,
+      .edit-panel button {
+        width: 100%;
+        box-sizing: border-box;
+      }
     }
   </style>
 </head>
@@ -212,8 +231,16 @@
       <button class="danger" onclick="resetSavedData()">保存リセット</button>
     </div>
 
+    <div class="edit-panel">
+      <select id="editPerson"></select>
+      <select id="editDay"></select>
+      <input id="editShift" placeholder="例：早 / 遅 / 中 / 休み" />
+      <button onclick="changeShiftFromPanel()">変更</button>
+      <button class="secondary" onclick="clearShiftFromPanel()">空白にする</button>
+    </div>
+
     <p class="notice">
-      名前と番号は左に固定。日付部分だけ横にスクロールできます。編集モード後、黄色いセルをタップすると変更できます。
+      名前と番号は左に固定。日付部分だけ横にスクロールできます。上の欄で名前・日付を選んで変更できます。編集モード後は黄色いセルを直接タップしても変更できます。
     </p>
 
     <textarea id="dataBox"></textarea>
@@ -331,6 +358,55 @@ function saveCurrentData() {
   localStorage.setItem("shiftSiteData", lines.join("\n"));
 }
 
+function renderEditPanel() {
+  const personSelect = document.getElementById("editPerson");
+  const daySelect = document.getElementById("editDay");
+
+  personSelect.innerHTML = "";
+  people.forEach(person => {
+    const option = document.createElement("option");
+    option.value = person.code;
+    option.textContent = `${person.name}（${person.code}）`;
+    personSelect.appendChild(option);
+  });
+
+  daySelect.innerHTML = "";
+  DAYS.forEach(day => {
+    const option = document.createElement("option");
+    option.value = day;
+    option.textContent = `${MONTH}/${day}`;
+    daySelect.appendChild(option);
+  });
+}
+
+function changeShiftFromPanel() {
+  const code = document.getElementById("editPerson").value;
+  const day = Number(document.getElementById("editDay").value);
+  const shift = document.getElementById("editShift").value.trim();
+
+  if (!shift) {
+    alert("シフトを入力してください");
+    return;
+  }
+
+  shiftMap[`${code}_${day}`] = shift;
+  saveCurrentData();
+  renderTable();
+  updateDataBox();
+  alert("変更しました");
+}
+
+function clearShiftFromPanel() {
+  const code = document.getElementById("editPerson").value;
+  const day = Number(document.getElementById("editDay").value);
+
+  delete shiftMap[`${code}_${day}`];
+  saveCurrentData();
+  renderTable();
+  updateDataBox();
+  alert("空白にしました");
+}
+
 function renderTable() {
   const table = document.getElementById("shiftTable");
   let html = `<tr><th class="fixed-code">番号</th><th class="fixed-name">名前</th>`;
@@ -354,7 +430,7 @@ function unlockEdit() {
   if (pass === PASSWORD) {
     editing = true;
     document.body.classList.add("editing");
-    alert("編集モードON");
+    alert("編集モードON。黄色いセルの直接編集もできます。上の選択欄からの変更も使えます。");
   } else {
     alert("パスコードが違います");
   }
@@ -402,6 +478,7 @@ function applyDataBox() {
   const text = document.getElementById("dataBox").value;
   parseData(text);
   localStorage.setItem("shiftSiteData", text.trim());
+  renderEditPanel();
   renderTable();
   alert("データを更新しました");
 }
@@ -410,12 +487,44 @@ function resetSavedData() {
   if (!confirm("この端末に保存した編集内容を消して初期状態に戻しますか？")) return;
   localStorage.removeItem("shiftSiteData");
   loadData();
+  renderEditPanel();
   renderTable();
 }
 
 loadData();
+renderEditPanel();
 renderTable();
 </script>
 </body>
-</html>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyAvR4fXtQ-FMXGzOFaLr1QcAeIZlZoMep0",
+  authDomain: "shift-039.firebaseapp.com",
+  projectId: "shift-039",
+  storageBucket: "shift-039.firebasestorage.app",
+  messagingSenderId: "478983414397",
+  appId: "1:478983414397:web:255e5b256da26aa0fcc714"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const shiftRef = doc(db, "shift", "main");
+
+// 保存（既存の保存処理をこれに変える）
+window.saveToFirebase = async (data) => {
+  await setDoc(shiftRef, { text: data });
+};
+
+// リアルタイム反映
+onSnapshot(shiftRef, (docSnap) => {
+  if (docSnap.exists()) {
+    window.parseData(docSnap.data().text);
+    window.renderTable();
+  }
+});
+</script>
+</html>
+<!DOCTYPE html>
