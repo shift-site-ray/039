@@ -1,13 +1,14 @@
-```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>シフト表</title>
+
 <style>
 body{font-family:sans-serif;margin:0;background:#f4f6f8}
 header{background:#222;color:#fff;padding:15px;text-align:center}
+button{margin:5px;padding:10px}
 .table-scroll{overflow-x:auto;background:#fff}
 table{border-collapse:collapse;min-width:1200px}
 th,td{border:1px solid #ddd;padding:8px;text-align:center}
@@ -15,10 +16,11 @@ th{background:#333;color:#fff}
 .fixed{position:sticky;left:0;background:#eee;font-weight:bold}
 </style>
 </head>
+
 <body>
 
 <header>
-<h1 id="title">シフト表</h1>
+<h1>シフト表</h1>
 <p id="status">Firebase接続中...</p>
 </header>
 
@@ -45,30 +47,30 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const ref = doc(db,"shift","main");
 
-let data={};
-let editing=false;
+let data = {};
+let editing = false;
 
 function render(){
-let html="<tr><th class='fixed'>名前</th>";
+let html = "<tr><th class='fixed'>名前</th>";
 for(let i=1;i<=30;i++){html+=`<th>${i}</th>`}
-html+="</tr>";
+html += "</tr>";
 
 Object.keys(data).forEach(name=>{
-html+=`<tr><td class='fixed'>${name}</td>`;
+html += `<tr><td class='fixed'>${name}</td>`;
 for(let i=1;i<=30;i++){
-let v=data[name][i]||"";
-html+=`<td onclick="edit('${name}',${i})">${v}</td>`;
+let v = data[name][i] || "";
+html += `<td onclick="edit('${name}',${i})">${v}</td>`;
 }
-html+="</tr>";
+html += "</tr>";
 });
-document.getElementById("table").innerHTML=html;
+document.getElementById("table").innerHTML = html;
 }
 
-window.edit=(name,day)=>{
+window.edit = (name,day)=>{
 if(!editing)return;
-let v=prompt("シフト",data[name][day]||"");
+let v = prompt("シフト", data[name][day] || "");
 if(v===null)return;
-data[name][day]=v;
+data[name][day] = v;
 save();
 }
 
@@ -78,21 +80,25 @@ setDoc(ref,{data:data});
 
 onSnapshot(ref,(snap)=>{
 if(snap.exists()){
-data=snap.data().data;
+data = snap.data().data;
 document.getElementById("status").innerText="接続OK";
 render();
+}else{
+document.getElementById("status").innerText="データなし";
 }
+},()=>{
+document.getElementById("status").innerText="接続エラー";
 });
 
-window.unlockEdit=()=>{
+window.unlockEdit = ()=>{
 if(prompt("パスワード")==="1234"){
-editing=true;
+editing = true;
 alert("編集ON");
 }
 }
 
-window.resetData=()=>{
-data={
+window.resetData = ()=>{
+data = {
 "小田嶋":{},
 "棚倉":{},
 "能見":{},
@@ -105,4 +111,3 @@ save();
 
 </body>
 </html>
-```
