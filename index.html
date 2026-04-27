@@ -1,303 +1,96 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>シフト表</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      background: #f4f6f8;
-      color: #222;
-    }
-
-    header {
-      background: #222;
-      color: white;
-      padding: 16px 12px;
-      text-align: center;
-    }
-
-    header h1 {
-      margin: 0 0 6px;
-      font-size: 22px;
-    }
-
-    #status, #lastUpdated {
-      margin: 3px 0;
-      font-size: 13px;
-      color: #eee;
-    }
-
-    .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 14px;
-    }
-
-    .controls, .edit-panel, .month-panel {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      margin: 12px 0;
-    }
-
-    .edit-panel, .month-panel {
-      background: white;
-      border-radius: 14px;
-      padding: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    }
-
-    button, select, input {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 15px;
-    }
-
-    button {
-      background: #222;
-      color: white;
-      cursor: pointer;
-    }
-
-    button.secondary { background: #666; }
-    button.danger { background: #b3261e; }
-
-    select, input {
-      background: white;
-      border: 1px solid #ccc;
-    }
-
-    .edit-panel input { min-width: 170px; }
-
-    .notice {
-      font-size: 13px;
-      color: #555;
-      text-align: center;
-      margin: 10px 0 12px;
-      line-height: 1.6;
-    }
-
-    .table-scroll {
-      width: 100%;
-      overflow-x: auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      -webkit-overflow-scrolling: touch;
-    }
-
-    table {
-      border-collapse: collapse;
-      background: white;
-      min-width: 1900px;
-      width: max-content;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px 8px;
-      text-align: center;
-      font-size: 14px;
-      white-space: nowrap;
-    }
-
-    th {
-      background: #333;
-      color: white;
-      position: sticky;
-      top: 0;
-      z-index: 3;
-    }
-
-    th.saturday { color: #8fd0ff; }
-    th.sunday, th.holiday { color: #ff9a9a; }
-
-    .fixed-code, .fixed-name {
-      position: sticky;
-      z-index: 4;
-    }
-
-    .fixed-code {
-      left: 0;
-      min-width: 72px;
-      width: 72px;
-    }
-
-    .fixed-name {
-      left: 89px;
-      min-width: 120px;
-      width: 120px;
-    }
-
-    th.fixed-code, th.fixed-name {
-      background: #222;
-      color: white;
-    }
-
-    td.fixed-code {
-      font-size: 12px;
-      color: #555;
-      background: #fafafa;
-      font-weight: 600;
-    }
-
-    td.fixed-name {
-      font-weight: 700;
-      background: #f0f0f0;
-    }
-
-    td.shift {
-      min-width: 56px;
-      height: 34px;
-    }
-
-    td.shift.rest {
-      color: #b3261e;
-      background: #ffecec;
-      font-weight: 700;
-    }
-
-    td.shift.support {
-      color: #005eb8;
-      background: #eaf4ff;
-      font-weight: 700;
-    }
-
-    body.editing td.shift {
-      background: #fff6d7;
-      cursor: pointer;
-    }
-
-    body.editing td.shift.rest { background: #ffe1e1; }
-    body.editing td.shift.support { background: #dbeeff; }
-
-    body.editing td.shift:hover {
-      outline: 2px solid #333;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 170px;
-      box-sizing: border-box;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      padding: 10px;
-      font-size: 14px;
-      display: none;
-      margin-top: 12px;
-    }
-
-    .legend {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-      font-size: 13px;
-      margin: 10px 0;
-    }
-
-    .tag {
-      border-radius: 999px;
-      padding: 5px 10px;
-      background: white;
-      border: 1px solid #ddd;
-    }
-
-    .tag.red { color: #b3261e; background: #ffecec; }
-    .tag.blue { color: #005eb8; background: #eaf4ff; }
-
-    @media (max-width: 700px) {
-      .wrap { padding: 10px; }
-      header h1 { font-size: 19px; }
-      th, td { font-size: 12px; padding: 8px 6px; }
-      table { min-width: 1750px; }
-      .fixed-code { min-width: 64px; width: 64px; }
-      .fixed-name { left: 77px; min-width: 96px; width: 96px; }
-      td.shift { min-width: 48px; }
-      .edit-panel input, .edit-panel select, .edit-panel button,
-      .month-panel input, .month-panel select, .month-panel button {
-        width: 100%;
-        box-sizing: border-box;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>シフト表</title>
+<style>
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;background:#f4f6f8;color:#222}
+header{background:#222;color:white;padding:16px 12px;text-align:center}
+header h1{margin:0 0 6px;font-size:22px}
+#status,#lastUpdated{margin:3px 0;font-size:13px;color:#eee}
+.wrap{max-width:1100px;margin:0 auto;padding:14px}
+.controls,.edit-panel,.month-panel{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center;margin:12px 0}
+.edit-panel,.month-panel{background:white;border-radius:14px;padding:12px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+button,select,input{border:none;border-radius:10px;padding:10px 12px;font-size:15px}
+button{background:#222;color:white;cursor:pointer}
+button.secondary{background:#666}
+button.danger{background:#b3261e}
+select,input{background:white;border:1px solid #ccc}
+.edit-panel input{min-width:160px}
+.notice{font-size:13px;color:#555;text-align:center;margin:10px 0 12px;line-height:1.6}
+.table-scroll{width:100%;overflow-x:auto;background:white;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.08);-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;background:white;min-width:1900px;width:max-content}
+th,td{border:1px solid #ddd;padding:10px 8px;text-align:center;font-size:14px;white-space:nowrap}
+th{background:#333;color:white;position:sticky;top:0;z-index:3}
+th.saturday{color:#8fd0ff}
+th.sunday,th.holiday{color:#ff9a9a}
+.fixed-code,.fixed-name{position:sticky;z-index:4}
+.fixed-code{left:0;min-width:72px;width:72px}
+.fixed-name{left:89px;min-width:120px;width:120px}
+th.fixed-code,th.fixed-name{background:#222;color:white}
+td.fixed-code{font-size:12px;color:#555;background:#fafafa;font-weight:600}
+td.fixed-name{font-weight:700;background:#f0f0f0}
+td.shift{min-width:56px;height:34px}
+td.shift.rest{color:#b3261e;background:#ffecec;font-weight:700}
+td.shift.support{color:#005eb8;background:#eaf4ff;font-weight:700}
+body.editing td.shift{background:#fff6d7;cursor:pointer}
+body.editing td.shift.rest{background:#ffe1e1}
+body.editing td.shift.support{background:#dbeeff}
+body.editing td.shift:hover{outline:2px solid #333}
+textarea{width:100%;min-height:170px;box-sizing:border-box;border-radius:10px;border:1px solid #ccc;padding:10px;font-size:14px;display:none;margin-top:12px}
+.legend{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:13px;margin:10px 0}
+.tag{border-radius:999px;padding:5px 10px;background:white;border:1px solid #ddd}
+.tag.red{color:#b3261e;background:#ffecec}.tag.blue{color:#005eb8;background:#eaf4ff}
+@media(max-width:700px){.wrap{padding:10px}header h1{font-size:19px}th,td{font-size:12px;padding:8px 6px}table{min-width:1750px}.fixed-code{min-width:64px;width:64px}.fixed-name{left:77px;min-width:96px;width:96px}td.shift{min-width:48px}.edit-panel input,.edit-panel select,.edit-panel button,.month-panel input,.month-panel select,.month-panel button{width:100%;box-sizing:border-box}}
+</style>
 </head>
 <body>
-  <header>
-    <h1 id="title">シフト表</h1>
-    <p id="status">Firebase接続中...</p>
-    <p id="lastUpdated">最終更新：未更新</p>
-  </header>
-
-  <div class="wrap">
-    <div class="month-panel">
-      <select id="monthSelect" onchange="changeMonthFromSelect()"></select>
-      <input id="newMonthInput" placeholder="例：2026-05" />
-      <button onclick="addMonth()">月を追加/切替</button>
-    </div>
-
-    <div class="controls">
-      <button onclick="unlockEdit()">編集モード</button>
-      <button class="secondary" onclick="toggleDataBox()">データ貼り替え</button>
-      <button class="danger" onclick="resetCurrentMonth()">この月を初期化</button>
-    </div>
-
-    <div class="edit-panel">
-      <select id="editPerson"></select>
-      <select id="editDay"></select>
-      <input id="editShift" placeholder="例：早 / 遅 / 中 / 休み" />
-      <input id="editorName" placeholder="更新者名 例：小田嶋" />
-      <button onclick="changeShiftFromPanel()">変更</button>
-      <button class="secondary" onclick="clearShiftFromPanel()">空白にする</button>
-    </div>
-
-    <p class="notice">
-      名前と番号は左に固定、日付だけ横スクロール。月ごとにFirebaseへ別保存されるので、5月を追加しても4月は残ります。<br>
-      データ貼り替えは「番号,名前,日付,シフト」の形式で貼ってください。
-    </p>
-
-    <div class="legend">
-      <span class="tag red">休み・有給：赤</span>
-      <span class="tag blue">応援：青</span>
-      <span class="tag">土曜：日付青</span>
-      <span class="tag">日曜・祝日：日付赤</span>
-    </div>
-
-    <textarea id="dataBox"></textarea>
-    <div id="dataButtons" class="controls" style="display:none;">
-      <button onclick="applyDataBox()">このデータを現在の月に保存</button>
-    </div>
-
-    <div class="table-scroll">
-      <table id="shiftTable"></table>
-    </div>
-  </div>
-
+<header>
+<h1 id="title">シフト表</h1>
+<p id="status">Firebase接続中...</p>
+<p id="lastUpdated">最終更新：未更新</p>
+</header>
+<div class="wrap">
+<div class="month-panel">
+<select id="monthSelect" onchange="changeMonthFromSelect()"></select>
+<input id="newMonthInput" placeholder="例：2026-05">
+<button onclick="addMonth()">月を追加/切替</button>
+</div>
+<div class="controls">
+<button onclick="unlockEdit()">編集モード</button>
+<button class="secondary" onclick="toggleDataBox()">データ貼り替え</button>
+<button class="danger" onclick="resetCurrentMonth()">この月を初期化</button>
+</div>
+<div class="edit-panel">
+<select id="editPerson"></select>
+<select id="editDay"></select>
+<input id="editShift" placeholder="例：早 / 遅 / 中 / 休み">
+<input id="editorName" placeholder="更新者名 例：小田嶋">
+<button onclick="changeShiftFromPanel()">変更</button>
+<button class="secondary" onclick="clearShiftFromPanel()">空白にする</button>
+</div>
+<p class="notice">名前と番号は左に固定、日付だけ横スクロール。月ごとにFirebaseへ別保存されるので、5月を追加しても4月は残ります。<br>データ貼り替えは「番号,名前,日付,シフト」の形式で貼ってください。</p>
+<div class="legend">
+<span class="tag red">休み・有給：赤</span>
+<span class="tag blue">応援：青</span>
+<span class="tag">土曜：日付青</span>
+<span class="tag">日曜・祝日：日付赤</span>
+</div>
+<textarea id="dataBox"></textarea>
+<div id="dataButtons" class="controls" style="display:none;">
+<button onclick="applyDataBox()">このデータを現在の月に保存</button>
+</div>
+<div class="table-scroll"><table id="shiftTable"></table></div>
+</div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, setDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAvR4fXtQ-FMXGzOFaLr1QcAeIZlZoMep0",
-  authDomain: "shift-039.firebaseapp.com",
-  projectId: "shift-039",
-  storageBucket: "shift-039.firebasestorage.app",
-  messagingSenderId: "478983414397",
-  appId: "1:478983414397:web:255e5b256da26aa0fcc714"
-};
-
-const PASSWORD = "1234";
-const DEFAULT_YEAR = 2026;
-const DEFAULT_MONTH = 4;
-
-const initialDataByMonth = {
-  "2026-04": `
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyAvR4fXtQ-FMXGzOFaLr1QcAeIZlZoMep0",authDomain:"shift-039.firebaseapp.com",projectId:"shift-039",storageBucket:"shift-039.firebasestorage.app",messagingSenderId:"478983414397",appId:"1:478983414397:web:255e5b256da26aa0fcc714"};
+const PASSWORD="1234";
+const DEFAULT_YEAR=2026;
+const DEFAULT_MONTH=4;
+const initialDataByMonth={"2026-04":`
 71861,棚倉亮馬,4/1,遅
 71861,棚倉亮馬,4/3,フル
 71861,棚倉亮馬,4/4,遅
@@ -356,344 +149,40 @@ const initialDataByMonth = {
 109053,小田嶋玲,4/19,中
 109053,小田嶋玲,4/24,方針
 109053,小田嶋玲,4/26,中
-119645,池本琴音,4/24,方針
-`.trim()
-};
-
-const holiday2026 = new Set([
-  "2026-01-01", "2026-01-12", "2026-02-11", "2026-02-23",
-  "2026-03-20", "2026-04-29", "2026-05-03", "2026-05-04",
-  "2026-05-05", "2026-05-06", "2026-07-20", "2026-08-11",
-  "2026-09-21", "2026-09-22", "2026-09-23", "2026-10-12",
-  "2026-11-03", "2026-11-23"
-]);
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-let currentYear = DEFAULT_YEAR;
-let currentMonth = DEFAULT_MONTH;
-let currentKey = makeMonthKey(currentYear, currentMonth);
-let DAYS = [];
-let people = [];
-let shiftMap = {};
-let editing = false;
-let unsubscribe = null;
-let lastMeta = { updatedAt: "", updatedBy: "" };
-
-function makeMonthKey(year, month) {
-  return `${year}-${String(month).padStart(2, "0")}`;
-}
-
-function parseMonthKey(key) {
-  const [year, month] = key.split("-").map(Number);
-  return { year, month };
-}
-
-function monthRef(key = currentKey) {
-  return doc(db, "shiftMonths", key);
-}
-
-function daysInMonth(year, month) {
-  return new Date(year, month, 0).getDate();
-}
-
-function setupDays() {
-  DAYS = Array.from({ length: daysInMonth(currentYear, currentMonth) }, (_, i) => i + 1);
-}
-
-function setStatus(text) {
-  document.getElementById("status").textContent = text;
-}
-
-function formatDateKey(day) {
-  return `${currentYear}-${String(currentMonth).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
-
-function dateClass(day) {
-  const date = new Date(currentYear, currentMonth - 1, day);
-  const weekday = date.getDay();
-  const key = formatDateKey(day);
-  if (holiday2026.has(key)) return "holiday";
-  if (weekday === 0) return "sunday";
-  if (weekday === 6) return "saturday";
-  return "";
-}
-
-function shiftClass(value) {
-  if (!value) return "";
-  if (value.includes("休") || value.includes("有給")) return "rest";
-  if (value.includes("応援")) return "support";
-  return "";
-}
-
-function parseData(text) {
-  people = [];
-  shiftMap = {};
-  const personMap = {};
-
-  text.split("\n").forEach(line => {
-    const parts = line.split(",").map(v => v.trim());
-    if (parts.length < 4) return;
-    const [code, name, date, shift] = parts;
-    const dateParts = date.split("/").map(Number);
-    if (dateParts.length < 2) return;
-    const month = dateParts[0];
-    const day = dateParts[1];
-    if (!code || !name || !month || !day) return;
-
-    if (!personMap[code]) {
-      personMap[code] = { code, name };
-      people.push(personMap[code]);
-    }
-    shiftMap[`${code}_${day}`] = shift;
-  });
-}
-
-function dataToText() {
-  const lines = [];
-  people.forEach(person => {
-    DAYS.forEach(day => {
-      const shift = shiftMap[`${person.code}_${day}`];
-      if (shift) lines.push(`${person.code},${person.name},${currentMonth}/${day},${shift}`);
-    });
-  });
-  return lines.join("\n");
-}
-
-function renderTitle() {
-  document.getElementById("title").textContent = `${currentYear}年${currentMonth}月 シフト表`;
-}
-
-function renderLastUpdated() {
-  const el = document.getElementById("lastUpdated");
-  if (!lastMeta.updatedAt) {
-    el.textContent = "最終更新：未更新";
-    return;
-  }
-  const d = new Date(lastMeta.updatedAt);
-  const formatted = `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-  el.textContent = `最終更新：${formatted}${lastMeta.updatedBy ? `（${lastMeta.updatedBy}）` : ""}`;
-}
-
-function renderMonthSelect() {
-  const select = document.getElementById("monthSelect");
-  const existing = new Set(["2026-04", "2026-05", currentKey]);
-  select.innerHTML = "";
-  [...existing].sort().forEach(key => {
-    const { year, month } = parseMonthKey(key);
-    const option = document.createElement("option");
-    option.value = key;
-    option.textContent = `${year}年${month}月`;
-    if (key === currentKey) option.selected = true;
-    select.appendChild(option);
-  });
-}
-
-function renderEditPanel() {
-  const personSelect = document.getElementById("editPerson");
-  const daySelect = document.getElementById("editDay");
-
-  personSelect.innerHTML = "";
-  people.forEach(person => {
-    const option = document.createElement("option");
-    option.value = person.code;
-    option.textContent = `${person.name}（${person.code}）`;
-    personSelect.appendChild(option);
-  });
-
-  daySelect.innerHTML = "";
-  DAYS.forEach(day => {
-    const option = document.createElement("option");
-    option.value = day;
-    option.textContent = `${currentMonth}/${day}`;
-    daySelect.appendChild(option);
-  });
-}
-
-function renderTable() {
-  const table = document.getElementById("shiftTable");
-  let html = `<tr><th class="fixed-code">番号</th><th class="fixed-name">名前</th>`;
-  DAYS.forEach(day => {
-    const cls = dateClass(day);
-    html += `<th class="${cls}">${day}日</th>`;
-  });
-  html += `</tr>`;
-
-  people.forEach(person => {
-    html += `<tr><td class="fixed-code">${person.code}</td><td class="fixed-name">${person.name}</td>`;
-    DAYS.forEach(day => {
-      const value = shiftMap[`${person.code}_${day}`] || "";
-      html += `<td class="shift ${shiftClass(value)}" onclick="window.editCell('${person.code}', ${day})">${value}</td>`;
-    });
-    html += `</tr>`;
-  });
-
-  table.innerHTML = html;
-}
-
-function renderAll() {
-  renderTitle();
-  renderMonthSelect();
-  renderEditPanel();
-  renderTable();
-  renderLastUpdated();
-  updateDataBox();
-}
-
-async function saveCurrentMonth(updatedBy = "") {
-  const text = dataToText();
-  const meta = {
-    text,
-    updatedAt: new Date().toISOString(),
-    updatedBy: updatedBy || document.getElementById("editorName").value.trim() || "未入力"
-  };
-  try {
-    await setDoc(monthRef(), meta);
-    setStatus("Firebase保存済み：他の端末にも反映されます");
-  } catch (e) {
-    console.error(e);
-    setStatus("Firebase保存エラー：Firestoreルールを確認してください");
-    alert("Firebase保存エラー。Firestoreルールを確認してください。Consoleの赤いエラーも確認してください。");
-  }
-}
-
-async function loadMonth(key) {
-  currentKey = key;
-  const parsed = parseMonthKey(key);
-  currentYear = parsed.year;
-  currentMonth = parsed.month;
-  setupDays();
-
-  if (unsubscribe) unsubscribe();
-
-  unsubscribe = onSnapshot(monthRef(key), (snap) => {
-    if (snap.exists()) {
-      const docData = snap.data();
-      parseData(docData.text || "");
-      lastMeta = { updatedAt: docData.updatedAt || "", updatedBy: docData.updatedBy || "" };
-      setStatus("Firebase接続OK：リアルタイム反映中");
-    } else {
-      parseData(initialDataByMonth[key] || "");
-      lastMeta = { updatedAt: "", updatedBy: "" };
-      setStatus("この月はまだFirebase未保存です。データ貼り替えか初期化で保存できます");
-    }
-    renderAll();
-  }, (error) => {
-    console.error(error);
-    setStatus("Firebase接続エラー：Firestoreルールを確認してください");
-  });
-}
-
-window.changeMonthFromSelect = function() {
-  const key = document.getElementById("monthSelect").value;
-  loadMonth(key);
-};
-
-window.addMonth = async function() {
-  const input = document.getElementById("newMonthInput").value.trim();
-  if (!/^\d{4}-\d{2}$/.test(input)) {
-    alert("2026-05 の形で入力してください");
-    return;
-  }
-  await loadMonth(input);
-};
-
-window.unlockEdit = function() {
-  const pass = prompt("パスコードを入力");
-  if (pass === PASSWORD) {
-    editing = true;
-    document.body.classList.add("editing");
-    alert("編集モードON");
-  } else {
-    alert("パスコードが違います");
-  }
-};
-
-window.editCell = async function(code, day) {
-  if (!editing) return;
-  const key = `${code}_${day}`;
-  const current = shiftMap[key] || "";
-  const next = prompt(`${currentMonth}/${day} のシフトを入力`, current);
-  if (next === null) return;
-
-  if (next.trim() === "") delete shiftMap[key];
-  else shiftMap[key] = next.trim();
-
-  renderTable();
-  updateDataBox();
-  await saveCurrentMonth();
-};
-
-window.changeShiftFromPanel = async function() {
-  const code = document.getElementById("editPerson").value;
-  const day = Number(document.getElementById("editDay").value);
-  const shift = document.getElementById("editShift").value.trim();
-
-  if (!code) {
-    alert("名前を選んでください");
-    return;
-  }
-  if (!shift) {
-    alert("シフトを入力してください");
-    return;
-  }
-
-  shiftMap[`${code}_${day}`] = shift;
-  renderTable();
-  updateDataBox();
-  await saveCurrentMonth();
-  alert("変更しました");
-};
-
-window.clearShiftFromPanel = async function() {
-  const code = document.getElementById("editPerson").value;
-  const day = Number(document.getElementById("editDay").value);
-
-  if (!code) {
-    alert("名前を選んでください");
-    return;
-  }
-
-  delete shiftMap[`${code}_${day}`];
-  renderTable();
-  updateDataBox();
-  await saveCurrentMonth();
-  alert("空白にしました");
-};
-
-window.toggleDataBox = function() {
-  const box = document.getElementById("dataBox");
-  const buttons = document.getElementById("dataButtons");
-  const show = box.style.display !== "block";
-  box.style.display = show ? "block" : "none";
-  buttons.style.display = show ? "flex" : "none";
-  if (show) updateDataBox();
-};
-
-function updateDataBox() {
-  document.getElementById("dataBox").value = dataToText();
-}
-
-window.applyDataBox = async function() {
-  const text = document.getElementById("dataBox").value.trim();
-  if (!text) {
-    alert("データが空です");
-    return;
-  }
-  parseData(text);
-  renderAll();
-  await saveCurrentMonth();
-  alert(`${currentYear}年${currentMonth}月のデータを保存しました`);
-};
-
-window.resetCurrentMonth = async function() {
-  if (!confirm("この月のデータを初期化してFirebaseにも保存しますか？")) return;
-  parseData(initialDataByMonth[currentKey] || "");
-  renderAll();
-  await saveCurrentMonth("初期化");
-};
-
+119645,池本琴音,4/24,方針`.trim()};
+const holiday2026=new Set(["2026-01-01","2026-01-12","2026-02-11","2026-02-23","2026-03-20","2026-04-29","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-07-20","2026-08-11","2026-09-21","2026-09-22","2026-09-23","2026-10-12","2026-11-03","2026-11-23"]);
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+let currentYear=DEFAULT_YEAR,currentMonth=DEFAULT_MONTH,currentKey=makeMonthKey(currentYear,currentMonth),DAYS=[],people=[],shiftMap={},editing=false,unsubscribe=null,knownMonths=new Set(["2026-04","2026-05"]),lastMeta={updatedAt:"",updatedBy:""};
+function makeMonthKey(year,month){return `${year}-${String(month).padStart(2,"0")}`}
+function parseMonthKey(key){const [year,month]=key.split("-").map(Number);return{year,month}}
+function monthRef(key=currentKey){return doc(db,"shiftMonths",key)}
+function daysInMonth(year,month){return new Date(year,month,0).getDate()}
+function setupDays(){DAYS=Array.from({length:daysInMonth(currentYear,currentMonth)},(_,i)=>i+1)}
+function setStatus(text){document.getElementById("status").textContent=text}
+function formatDateKey(day){return `${currentYear}-${String(currentMonth).padStart(2,"0")}-${String(day).padStart(2,"0")}`}
+function dateClass(day){const date=new Date(currentYear,currentMonth-1,day);const weekday=date.getDay();const key=formatDateKey(day);if(holiday2026.has(key))return"holiday";if(weekday===0)return"sunday";if(weekday===6)return"saturday";return""}
+function shiftClass(value){if(!value)return"";if(value.includes("休")||value.includes("有給"))return"rest";if(value.includes("応援"))return"support";return""}
+function parseData(text){people=[];shiftMap={};const personMap={};text.split("\n").forEach(line=>{const parts=line.split(",").map(v=>v.trim());if(parts.length<4)return;const[code,name,date,shift]=parts;const dateParts=date.split("/").map(Number);if(dateParts.length<2)return;const month=dateParts[0],day=dateParts[1];if(!code||!name||!month||!day)return;if(!personMap[code]){personMap[code]={code,name};people.push(personMap[code])}shiftMap[`${code}_${day}`]=shift})}
+function dataToText(){const lines=[];people.forEach(person=>{DAYS.forEach(day=>{const shift=shiftMap[`${person.code}_${day}`];if(shift)lines.push(`${person.code},${person.name},${currentMonth}/${day},${shift}`)})});return lines.join("\n")}
+function renderTitle(){document.getElementById("title").textContent=`${currentYear}年${currentMonth}月 シフト表`}
+function renderLastUpdated(){const el=document.getElementById("lastUpdated");if(!lastMeta.updatedAt){el.textContent="最終更新：未更新";return}const d=new Date(lastMeta.updatedAt);const formatted=`${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;el.textContent=`最終更新：${formatted}${lastMeta.updatedBy?`（${lastMeta.updatedBy}）`:""}`}
+function renderMonthSelect(){const select=document.getElementById("monthSelect");knownMonths.add(currentKey);select.innerHTML="";[...knownMonths].sort().forEach(key=>{const{year,month}=parseMonthKey(key);const option=document.createElement("option");option.value=key;option.textContent=`${year}年${month}月`;if(key===currentKey)option.selected=true;select.appendChild(option)})}
+function renderEditPanel(){const personSelect=document.getElementById("editPerson");const daySelect=document.getElementById("editDay");personSelect.innerHTML="";people.forEach(person=>{const option=document.createElement("option");option.value=person.code;option.textContent=`${person.name}（${person.code}）`;personSelect.appendChild(option)});daySelect.innerHTML="";DAYS.forEach(day=>{const option=document.createElement("option");option.value=day;option.textContent=`${currentMonth}/${day}`;daySelect.appendChild(option)})}
+function renderTable(){const table=document.getElementById("shiftTable");let html=`<tr><th class="fixed-code">番号</th><th class="fixed-name">名前</th>`;DAYS.forEach(day=>{const cls=dateClass(day);html+=`<th class="${cls}">${day}日</th>`});html+="</tr>";people.forEach(person=>{html+=`<tr><td class="fixed-code">${person.code}</td><td class="fixed-name">${person.name}</td>`;DAYS.forEach(day=>{const value=shiftMap[`${person.code}_${day}`]||"";html+=`<td class="shift ${shiftClass(value)}" onclick="window.editCell('${person.code}', ${day})">${value}</td>`});html+="</tr>"});table.innerHTML=html}
+function updateDataBox(){document.getElementById("dataBox").value=dataToText()}
+function renderAll(){renderTitle();renderMonthSelect();renderEditPanel();renderTable();renderLastUpdated();updateDataBox()}
+async function saveCurrentMonth(updatedBy=""){const text=dataToText();const meta={text,updatedAt:new Date().toISOString(),updatedBy:updatedBy||document.getElementById("editorName").value.trim()||"未入力"};try{await setDoc(monthRef(),meta);setStatus("Firebase保存済み：他の端末にも反映されます")}catch(e){console.error(e);setStatus("Firebase保存エラー：Firestoreルールを確認してください");alert("Firebase保存エラー。Firestoreルールを確認してください。")}}
+async function loadMonth(key){currentKey=key;knownMonths.add(key);const parsed=parseMonthKey(key);currentYear=parsed.year;currentMonth=parsed.month;setupDays();if(unsubscribe)unsubscribe();unsubscribe=onSnapshot(monthRef(key),(snap)=>{if(snap.exists()){const docData=snap.data();parseData(docData.text||"");lastMeta={updatedAt:docData.updatedAt||"",updatedBy:docData.updatedBy||""};setStatus("Firebase接続OK：リアルタイム反映中")}else{parseData(initialDataByMonth[key]||"");lastMeta={updatedAt:"",updatedBy:""};setStatus("この月はまだFirebase未保存です。データ貼り替えか初期化で保存できます")}renderAll()},(error)=>{console.error(error);setStatus("Firebase接続エラー：Firestoreルールを確認してください")})}
+window.changeMonthFromSelect=function(){const key=document.getElementById("monthSelect").value;loadMonth(key)};
+window.addMonth=async function(){const input=document.getElementById("newMonthInput").value.trim();if(!/^\d{4}-\d{2}$/.test(input)){alert("2026-05 の形で入力してください");return}await loadMonth(input)};
+window.unlockEdit=function(){const pass=prompt("パスコードを入力");if(pass===PASSWORD){editing=true;document.body.classList.add("editing");alert("編集モードON")}else{alert("パスコードが違います")}};
+window.editCell=async function(code,day){if(!editing)return;const key=`${code}_${day}`;const current=shiftMap[key]||"";const next=prompt(`${currentMonth}/${day} のシフトを入力`,current);if(next===null)return;if(next.trim()==="")delete shiftMap[key];else shiftMap[key]=next.trim();renderTable();updateDataBox();await saveCurrentMonth()};
+window.changeShiftFromPanel=async function(){const code=document.getElementById("editPerson").value;const day=Number(document.getElementById("editDay").value);const shift=document.getElementById("editShift").value.trim();if(!code){alert("名前を選んでください");return}if(!shift){alert("シフトを入力してください");return}shiftMap[`${code}_${day}`]=shift;renderTable();updateDataBox();await saveCurrentMonth();alert("変更しました")};
+window.clearShiftFromPanel=async function(){const code=document.getElementById("editPerson").value;const day=Number(document.getElementById("editDay").value);if(!code){alert("名前を選んでください");return}delete shiftMap[`${code}_${day}`];renderTable();updateDataBox();await saveCurrentMonth();alert("空白にしました")};
+window.toggleDataBox=function(){const box=document.getElementById("dataBox");const buttons=document.getElementById("dataButtons");const show=box.style.display!=="block";box.style.display=show?"block":"none";buttons.style.display=show?"flex":"none";if(show)updateDataBox()};
+window.applyDataBox=async function(){const text=document.getElementById("dataBox").value.trim();if(!text){alert("データが空です");return}parseData(text);renderAll();await saveCurrentMonth();alert(`${currentYear}年${currentMonth}月のデータを保存しました`)};
+window.resetCurrentMonth=async function(){if(!confirm("この月のデータを初期化してFirebaseにも保存しますか？"))return;parseData(initialDataByMonth[currentKey]||"");renderAll();await saveCurrentMonth("初期化")};
 setupDays();
 loadMonth(currentKey);
 </script>
