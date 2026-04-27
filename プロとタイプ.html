@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2026年4月 シフト表</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    header {
+      background: #222;
+      color: white;
+      padding: 18px 14px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 14px 0 18px;
+    }
+
+    button, select {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 15px;
+    }
+
+    button {
+      background: #222;
+      color: white;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #666;
+    }
+
+    button.danger {
+      background: #b3261e;
+    }
+
+    select {
+      background: white;
+      border: 1px solid #ccc;
+    }
+
+    .notice {
+      font-size: 13px;
+      color: #555;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      border-collapse: collapse;
+      background: white;
+      min-width: 1900px;
+      width: max-content;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #333;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+
+    .fixed-code,
+    .fixed-name {
+      position: sticky;
+      z-index: 4;
+    }
+
+    .fixed-code {
+      left: 0;
+      min-width: 72px;
+      width: 72px;
+    }
+
+    .fixed-name {
+      left: 89px;
+      min-width: 120px;
+      width: 120px;
+    }
+
+    th.fixed-code,
+    th.fixed-name {
+      background: #222;
+      color: white;
+    }
+
+    td.fixed-code {
+      font-size: 12px;
+      color: #555;
+      background: #fafafa;
+      font-weight: 600;
+    }
+
+    td.fixed-name {
+      font-weight: 700;
+      background: #f0f0f0;
+    }
+
+    td.shift {
+      min-width: 56px;
+      height: 34px;
+    }
+
+    body.editing td.shift {
+      background: #fff6d7;
+      cursor: pointer;
+    }
+
+    body.editing td.shift:hover {
+      outline: 2px solid #333;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      box-sizing: border-box;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 14px;
+      display: none;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .wrap {
+        padding: 10px;
+      }
+
+      header h1 {
+        font-size: 19px;
+      }
+
+      th, td {
+        font-size: 12px;
+        padding: 8px 6px;
+      }
+
+      table {
+        min-width: 1750px;
+      }
+
+      .fixed-code {
+        min-width: 64px;
+        width: 64px;
+      }
+
+      .fixed-name {
+        left: 77px;
+        min-width: 96px;
+        width: 96px;
+      }
+
+      td.shift {
+        min-width: 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>2026年4月 シフト表</h1>
+  </header>
+
+  <div class="wrap">
+    <div class="controls">
+      <button onclick="unlockEdit()">編集モード</button>
+      <button class="secondary" onclick="toggleDataBox()">データ貼り替え</button>
+      <button class="danger" onclick="resetSavedData()">保存リセット</button>
+    </div>
+
+    <p class="notice">
+      名前と番号は左に固定。日付部分だけ横にスクロールできます。編集モード後、黄色いセルをタップすると変更できます。
+    </p>
+
+    <textarea id="dataBox"></textarea>
+    <div id="dataButtons" class="controls" style="display:none;">
+      <button onclick="applyDataBox()">このデータで更新</button>
+    </div>
+
+    <div class="table-scroll">
+      <table id="shiftTable"></table>
+    </div>
+  </div>
+
+<script>
+const PASSWORD = "1234"; // 好きなパスコードに変えてOK
+const MONTH = "4";
+const DAYS = Array.from({ length: 30 }, (_, i) => i + 1);
+
+const initialDataText = `
+71861,棚倉亮馬,4/1,遅
+71861,棚倉亮馬,4/3,フル
+71861,棚倉亮馬,4/4,遅
+71861,棚倉亮馬,4/5,遅
+71861,棚倉亮馬,4/7,遅
+71861,棚倉亮馬,4/8,遅
+71861,棚倉亮馬,4/9,方針
+71861,棚倉亮馬,4/11,遅
+71861,棚倉亮馬,4/12,遅
+71861,棚倉亮馬,4/13,遅
+71861,棚倉亮馬,4/14,遅
+71861,棚倉亮馬,4/15,遅
+71861,棚倉亮馬,4/18,遅
+71861,棚倉亮馬,4/19,遅
+71861,棚倉亮馬,4/20,遅
+71861,棚倉亮馬,4/21,遅
+71861,棚倉亮馬,4/24,遅
+71861,棚倉亮馬,4/25,遅
+71861,棚倉亮馬,4/26,遅
+71861,棚倉亮馬,4/27,有給
+71861,棚倉亮馬,4/28,応援
+71861,棚倉亮馬,4/29,遅
+111171,能見彩夏,4/2,早
+111171,能見彩夏,4/4,開早
+111171,能見彩夏,4/5,開早
+111171,能見彩夏,4/6,早
+111171,能見彩夏,4/7,開早
+111171,能見彩夏,4/9,早
+111171,能見彩夏,4/10,早
+111171,能見彩夏,4/11,開早
+111171,能見彩夏,4/12,開早
+111171,能見彩夏,4/13,早
+111171,能見彩夏,4/14,遅
+111171,能見彩夏,4/16,早
+111171,能見彩夏,4/17,早
+111171,能見彩夏,4/18,開早
+111171,能見彩夏,4/19,開早
+111171,能見彩夏,4/20,中
+111171,能見彩夏,4/24,方針
+111171,能見彩夏,4/25,開早
+111171,能見彩夏,4/26,開早
+111171,能見彩夏,4/27,早
+111171,能見彩夏,4/29,開早
+111171,能見彩夏,4/30,早
+104227,千ヶ崎桜子,4/24,方針
+109053,小田嶋玲,4/1,遅
+109053,小田嶋玲,4/2,遅
+109053,小田嶋玲,4/3,会議
+109053,小田嶋玲,4/4,中
+109053,小田嶋玲,4/5,中
+109053,小田嶋玲,4/6,遅
+109053,小田嶋玲,4/9,1220
+109053,小田嶋玲,4/11,中
+109053,小田嶋玲,4/12,中
+109053,小田嶋玲,4/13,中
+109053,小田嶋玲,4/19,中
+109053,小田嶋玲,4/24,方針
+109053,小田嶋玲,4/26,中
+119645,池本琴音,4/24,方針
+`.trim();
+
+let people = [];
+let shiftMap = {};
+let editing = false;
+
+function loadData() {
+  const saved = localStorage.getItem("shiftSiteData");
+  parseData(saved || initialDataText);
+}
+
+function parseData(text) {
+  people = [];
+  shiftMap = {};
+  const personMap = {};
+
+  text.split("\n").forEach(line => {
+    const parts = line.split(",").map(v => v.trim());
+    if (parts.length < 4) return;
+    const [code, name, date, shift] = parts;
+    const day = Number(date.split("/")[1]);
+    if (!personMap[code]) {
+      personMap[code] = { code, name };
+      people.push(personMap[code]);
+    }
+    shiftMap[`${code}_${day}`] = shift;
+  });
+}
+
+function saveCurrentData() {
+  const lines = [];
+  people.forEach(person => {
+    DAYS.forEach(day => {
+      const shift = shiftMap[`${person.code}_${day}`];
+      if (shift) lines.push(`${person.code},${person.name},${MONTH}/${day},${shift}`);
+    });
+  });
+  localStorage.setItem("shiftSiteData", lines.join("\n"));
+}
+
+function renderTable() {
+  const table = document.getElementById("shiftTable");
+  let html = `<tr><th class="fixed-code">番号</th><th class="fixed-name">名前</th>`;
+  DAYS.forEach(day => html += `<th>${day}日</th>`);
+  html += `</tr>`;
+
+  people.forEach(person => {
+    html += `<tr><td class="fixed-code">${person.code}</td><td class="fixed-name">${person.name}</td>`;
+    DAYS.forEach(day => {
+      const value = shiftMap[`${person.code}_${day}`] || "";
+      html += `<td class="shift" onclick="editCell('${person.code}', ${day})">${value}</td>`;
+    });
+    html += `</tr>`;
+  });
+
+  table.innerHTML = html;
+}
+
+function unlockEdit() {
+  const pass = prompt("パスコードを入力");
+  if (pass === PASSWORD) {
+    editing = true;
+    document.body.classList.add("editing");
+    alert("編集モードON");
+  } else {
+    alert("パスコードが違います");
+  }
+}
+
+function editCell(code, day) {
+  if (!editing) return;
+  const key = `${code}_${day}`;
+  const current = shiftMap[key] || "";
+  const next = prompt(`${MONTH}/${day} のシフトを入力`, current);
+  if (next === null) return;
+
+  if (next.trim() === "") {
+    delete shiftMap[key];
+  } else {
+    shiftMap[key] = next.trim();
+  }
+
+  saveCurrentData();
+  renderTable();
+  updateDataBox();
+}
+
+function toggleDataBox() {
+  const box = document.getElementById("dataBox");
+  const buttons = document.getElementById("dataButtons");
+  const show = box.style.display !== "block";
+  box.style.display = show ? "block" : "none";
+  buttons.style.display = show ? "flex" : "none";
+  if (show) updateDataBox();
+}
+
+function updateDataBox() {
+  const lines = [];
+  people.forEach(person => {
+    DAYS.forEach(day => {
+      const shift = shiftMap[`${person.code}_${day}`];
+      if (shift) lines.push(`${person.code},${person.name},${MONTH}/${day},${shift}`);
+    });
+  });
+  document.getElementById("dataBox").value = lines.join("\n");
+}
+
+function applyDataBox() {
+  const text = document.getElementById("dataBox").value;
+  parseData(text);
+  localStorage.setItem("shiftSiteData", text.trim());
+  renderTable();
+  alert("データを更新しました");
+}
+
+function resetSavedData() {
+  if (!confirm("この端末に保存した編集内容を消して初期状態に戻しますか？")) return;
+  localStorage.removeItem("shiftSiteData");
+  loadData();
+  renderTable();
+}
+
+loadData();
+renderTable();
+</script>
+</body>
+</html>
+
