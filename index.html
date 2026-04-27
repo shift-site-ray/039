@@ -1,229 +1,35 @@
+```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2026年4月 シフト表</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      background: #f4f6f8;
-      color: #222;
-    }
-
-    header {
-      background: #222;
-      color: white;
-      padding: 18px 14px;
-      text-align: center;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-
-    .controls, .edit-panel {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      margin: 14px 0 18px;
-    }
-
-    .edit-panel {
-      background: white;
-      border-radius: 14px;
-      padding: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    }
-
-    button, select, input {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 12px;
-      font-size: 15px;
-    }
-
-    button {
-      background: #222;
-      color: white;
-      cursor: pointer;
-    }
-
-    button.secondary { background: #666; }
-    button.danger { background: #b3261e; }
-
-    select, input {
-      background: white;
-      border: 1px solid #ccc;
-    }
-
-    .edit-panel input { min-width: 170px; }
-
-    .notice {
-      font-size: 13px;
-      color: #555;
-      text-align: center;
-      margin-bottom: 12px;
-    }
-
-    .status {
-      text-align: center;
-      font-size: 13px;
-      margin: 8px 0;
-      color: #444;
-    }
-
-    .table-scroll {
-      width: 100%;
-      overflow-x: auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      -webkit-overflow-scrolling: touch;
-    }
-
-    table {
-      border-collapse: collapse;
-      background: white;
-      min-width: 1900px;
-      width: max-content;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px 8px;
-      text-align: center;
-      font-size: 14px;
-      white-space: nowrap;
-    }
-
-    th {
-      background: #333;
-      color: white;
-      position: sticky;
-      top: 0;
-      z-index: 3;
-    }
-
-    .fixed-code, .fixed-name {
-      position: sticky;
-      z-index: 4;
-    }
-
-    .fixed-code {
-      left: 0;
-      min-width: 72px;
-      width: 72px;
-    }
-
-    .fixed-name {
-      left: 89px;
-      min-width: 120px;
-      width: 120px;
-    }
-
-    th.fixed-code, th.fixed-name {
-      background: #222;
-      color: white;
-    }
-
-    td.fixed-code {
-      font-size: 12px;
-      color: #555;
-      background: #fafafa;
-      font-weight: 600;
-    }
-
-    td.fixed-name {
-      font-weight: 700;
-      background: #f0f0f0;
-    }
-
-    td.shift {
-      min-width: 56px;
-      height: 34px;
-    }
-
-    body.editing td.shift {
-      background: #fff6d7;
-      cursor: pointer;
-    }
-
-    body.editing td.shift:hover {
-      outline: 2px solid #333;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 160px;
-      box-sizing: border-box;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      padding: 10px;
-      font-size: 14px;
-      display: none;
-      margin-top: 12px;
-    }
-
-    @media (max-width: 700px) {
-      .wrap { padding: 10px; }
-      header h1 { font-size: 19px; }
-      th, td { font-size: 12px; padding: 8px 6px; }
-      table { min-width: 1750px; }
-      .fixed-code { min-width: 64px; width: 64px; }
-      .fixed-name { left: 77px; min-width: 96px; width: 96px; }
-      td.shift { min-width: 48px; }
-      .edit-panel input, .edit-panel select, .edit-panel button {
-        width: 100%;
-        box-sizing: border-box;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>シフト表</title>
+<style>
+body{font-family:sans-serif;margin:0;background:#f4f6f8}
+header{background:#222;color:#fff;padding:15px;text-align:center}
+.table-scroll{overflow-x:auto;background:#fff}
+table{border-collapse:collapse;min-width:1200px}
+th,td{border:1px solid #ddd;padding:8px;text-align:center}
+th{background:#333;color:#fff}
+.fixed{position:sticky;left:0;background:#eee;font-weight:bold}
+</style>
 </head>
 <body>
-  <header>
-    <h1 id="title">2026年4月 シフト表</h1>
-  </header>
 
-  <div class="wrap">
-    <div class="controls">
-      <button onclick="unlockEdit()">編集モード</button>
-      <button class="secondary" onclick="toggleDataBox()">データ貼り替え</button>
-      <button class="danger" onclick="resetToInitialData()">初期データに戻す</button>
-    </div>
+<header>
+<h1 id="title">シフト表</h1>
+<p id="status">Firebase接続中...</p>
+</header>
 
-    <div class="edit-panel">
-      <select id="editPerson"></select>
-      <select id="editDay"></select>
-      <input id="editShift" placeholder="例：早 / 遅 / 中 / 休み" />
-      <button onclick="changeShiftFromPanel()">変更</button>
-      <button class="secondary" onclick="clearShiftFromPanel()">空白にする</button>
-    </div>
+<div>
+<button onclick="unlockEdit()">編集モード</button>
+<button onclick="resetData()">初期データ</button>
+</div>
 
-    <p class="notice">
-      名前と番号は左に固定。日付部分だけ横にスクロールできます。編集するとFirebaseに保存され、他の端末にも反映されます。
-    </p>
-    <p class="status" id="status">Firebase接続中...</p>
-
-    <textarea id="dataBox"></textarea>
-    <div id="dataButtons" class="controls" style="display:none;">
-      <button onclick="applyDataBox()">このデータで更新</button>
-    </div>
-
-    <div class="table-scroll">
-      <table id="shiftTable"></table>
-    </div>
-  </div>
+<div class="table-scroll">
+<table id="table"></table>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -232,293 +38,71 @@ import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/f
 const firebaseConfig = {
   apiKey: "AIzaSyAvR4fXtQ-FMXGzOFaLr1QcAeIZlZoMep0",
   authDomain: "shift-039.firebaseapp.com",
-  projectId: "shift-039",
-  storageBucket: "shift-039.firebasestorage.app",
-  messagingSenderId: "478983414397",
-  appId: "1:478983414397:web:255e5b256da26aa0fcc714"
+  projectId: "shift-039"
 };
-
-const PASSWORD = "1234";
-let currentMonth = "4";
-let DAYS = Array.from({ length: 30 }, (_, i) => i + 1);
-
-const initialDataText = `
-71861,棚倉亮馬,4/1,遅
-71861,棚倉亮馬,4/3,フル
-71861,棚倉亮馬,4/4,遅
-71861,棚倉亮馬,4/5,遅
-71861,棚倉亮馬,4/7,遅
-71861,棚倉亮馬,4/8,遅
-71861,棚倉亮馬,4/9,方針
-71861,棚倉亮馬,4/11,遅
-71861,棚倉亮馬,4/12,遅
-71861,棚倉亮馬,4/13,遅
-71861,棚倉亮馬,4/14,遅
-71861,棚倉亮馬,4/15,遅
-71861,棚倉亮馬,4/18,遅
-71861,棚倉亮馬,4/19,遅
-71861,棚倉亮馬,4/20,遅
-71861,棚倉亮馬,4/21,遅
-71861,棚倉亮馬,4/24,遅
-71861,棚倉亮馬,4/25,遅
-71861,棚倉亮馬,4/26,遅
-71861,棚倉亮馬,4/27,有給
-71861,棚倉亮馬,4/28,応援
-71861,棚倉亮馬,4/29,遅
-111171,能見彩夏,4/2,早
-111171,能見彩夏,4/4,開早
-111171,能見彩夏,4/5,開早
-111171,能見彩夏,4/6,早
-111171,能見彩夏,4/7,開早
-111171,能見彩夏,4/9,早
-111171,能見彩夏,4/10,早
-111171,能見彩夏,4/11,開早
-111171,能見彩夏,4/12,開早
-111171,能見彩夏,4/13,早
-111171,能見彩夏,4/14,遅
-111171,能見彩夏,4/16,早
-111171,能見彩夏,4/17,早
-111171,能見彩夏,4/18,開早
-111171,能見彩夏,4/19,開早
-111171,能見彩夏,4/20,中
-111171,能見彩夏,4/24,方針
-111171,能見彩夏,4/25,開早
-111171,能見彩夏,4/26,開早
-111171,能見彩夏,4/27,早
-111171,能見彩夏,4/29,開早
-111171,能見彩夏,4/30,早
-104227,千ヶ崎桜子,4/24,方針
-109053,小田嶋玲,4/1,遅
-109053,小田嶋玲,4/2,遅
-109053,小田嶋玲,4/3,会議
-109053,小田嶋玲,4/4,中
-109053,小田嶋玲,4/5,中
-109053,小田嶋玲,4/6,遅
-109053,小田嶋玲,4/9,1220
-109053,小田嶋玲,4/11,中
-109053,小田嶋玲,4/12,中
-109053,小田嶋玲,4/13,中
-109053,小田嶋玲,4/19,中
-109053,小田嶋玲,4/24,方針
-109053,小田嶋玲,4/26,中
-119645,池本琴音,4/24,方針
-`.trim();
-
-let people = [];
-let shiftMap = {};
-let editing = false;
-let firebaseReady = false;
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const shiftRef = doc(db, "shift", "main");
+const ref = doc(db,"shift","main");
 
-function setStatus(text) {
-  document.getElementById("status").textContent = text;
+let data={};
+let editing=false;
+
+function render(){
+let html="<tr><th class='fixed'>名前</th>";
+for(let i=1;i<=30;i++){html+=`<th>${i}</th>`}
+html+="</tr>";
+
+Object.keys(data).forEach(name=>{
+html+=`<tr><td class='fixed'>${name}</td>`;
+for(let i=1;i<=30;i++){
+let v=data[name][i]||"";
+html+=`<td onclick="edit('${name}',${i})">${v}</td>`;
 }
-
-function parseData(text) {
-  people = [];
-  shiftMap = {};
-  const personMap = {};
-  let detectedMonth = null;
-  let maxDay = 30;
-
-  text.split("\n").forEach(line => {
-    const parts = line.split(",").map(v => v.trim());
-    if (parts.length < 4) return;
-    const [code, name, date, shift] = parts;
-    const [monthText, dayText] = date.split("/");
-    const month = Number(monthText);
-    const day = Number(dayText);
-    if (!month || !day) return;
-
-    detectedMonth = String(month);
-    maxDay = Math.max(maxDay, day);
-
-    if (!personMap[code]) {
-      personMap[code] = { code, name };
-      people.push(personMap[code]);
-    }
-    shiftMap[`${code}_${day}`] = shift;
-  });
-
-  if (detectedMonth) currentMonth = detectedMonth;
-  const daysInMonth = new Date(2026, Number(currentMonth), 0).getDate();
-  DAYS = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-  document.getElementById("title").textContent = `2026年${currentMonth}月 シフト表`;
-}
-
-function dataToText() {
-  const lines = [];
-  people.forEach(person => {
-    DAYS.forEach(day => {
-      const shift = shiftMap[`${person.code}_${day}`];
-      if (shift) lines.push(`${person.code},${person.name},${currentMonth}/${day},${shift}`);
-    });
-  });
-  return lines.join("\n");
-}
-
-async function saveToFirebase() {
-  const text = dataToText();
-  try {
-    await setDoc(shiftRef, { text, updatedAt: new Date().toISOString() });
-    setStatus("Firebase保存済み：他の端末にも反映されます");
-  } catch (e) {
-    console.error(e);
-    setStatus("Firebase保存エラー：Firestoreルールか接続設定を確認してください");
-    alert("Firebase保存エラー。Consoleの赤いエラーを確認してください。");
-  }
-}
-
-function renderEditPanel() {
-  const personSelect = document.getElementById("editPerson");
-  const daySelect = document.getElementById("editDay");
-
-  personSelect.innerHTML = "";
-  people.forEach(person => {
-    const option = document.createElement("option");
-    option.value = person.code;
-    option.textContent = `${person.name}（${person.code}）`;
-    personSelect.appendChild(option);
-  });
-
-  daySelect.innerHTML = "";
-  DAYS.forEach(day => {
-    const option = document.createElement("option");
-    option.value = day;
-    option.textContent = `${currentMonth}/${day}`;
-    daySelect.appendChild(option);
-  });
-}
-
-function renderTable() {
-  const table = document.getElementById("shiftTable");
-  let html = `<tr><th class="fixed-code">番号</th><th class="fixed-name">名前</th>`;
-  DAYS.forEach(day => html += `<th>${day}日</th>`);
-  html += `</tr>`;
-
-  people.forEach(person => {
-    html += `<tr><td class="fixed-code">${person.code}</td><td class="fixed-name">${person.name}</td>`;
-    DAYS.forEach(day => {
-      const value = shiftMap[`${person.code}_${day}`] || "";
-      html += `<td class="shift" onclick="window.editCell('${person.code}', ${day})">${value}</td>`;
-    });
-    html += `</tr>`;
-  });
-
-  table.innerHTML = html;
-}
-
-window.unlockEdit = function() {
-  const pass = prompt("パスコードを入力");
-  if (pass === PASSWORD) {
-    editing = true;
-    document.body.classList.add("editing");
-    alert("編集モードON");
-  } else {
-    alert("パスコードが違います");
-  }
-};
-
-window.editCell = async function(code, day) {
-  if (!editing) return;
-  const key = `${code}_${day}`;
-  const current = shiftMap[key] || "";
-  const next = prompt(`${currentMonth}/${day} のシフトを入力`, current);
-  if (next === null) return;
-
-  if (next.trim() === "") delete shiftMap[key];
-  else shiftMap[key] = next.trim();
-
-  renderTable();
-  updateDataBox();
-  await saveToFirebase();
-};
-
-window.changeShiftFromPanel = async function() {
-  const code = document.getElementById("editPerson").value;
-  const day = Number(document.getElementById("editDay").value);
-  const shift = document.getElementById("editShift").value.trim();
-
-  if (!shift) {
-    alert("シフトを入力してください");
-    return;
-  }
-
-  shiftMap[`${code}_${day}`] = shift;
-  renderTable();
-  updateDataBox();
-  await saveToFirebase();
-  alert("変更しました");
-};
-
-window.clearShiftFromPanel = async function() {
-  const code = document.getElementById("editPerson").value;
-  const day = Number(document.getElementById("editDay").value);
-
-  delete shiftMap[`${code}_${day}`];
-  renderTable();
-  updateDataBox();
-  await saveToFirebase();
-  alert("空白にしました");
-};
-
-window.toggleDataBox = function() {
-  const box = document.getElementById("dataBox");
-  const buttons = document.getElementById("dataButtons");
-  const show = box.style.display !== "block";
-  box.style.display = show ? "block" : "none";
-  buttons.style.display = show ? "flex" : "none";
-  if (show) updateDataBox();
-};
-
-function updateDataBox() {
-  document.getElementById("dataBox").value = dataToText();
-}
-
-window.applyDataBox = async function() {
-  const text = document.getElementById("dataBox").value.trim();
-  if (!text) {
-    alert("データが空です");
-    return;
-  }
-  parseData(text);
-  renderEditPanel();
-  renderTable();
-  await saveToFirebase();
-  alert("データを更新しました");
-};
-
-window.resetToInitialData = async function() {
-  if (!confirm("初期データに戻してFirebaseにも保存しますか？")) return;
-  parseData(initialDataText);
-  renderEditPanel();
-  renderTable();
-  updateDataBox();
-  await saveToFirebase();
-};
-
-parseData(initialDataText);
-renderEditPanel();
-renderTable();
-
-onSnapshot(shiftRef, (docSnap) => {
-  firebaseReady = true;
-  if (docSnap.exists()) {
-    parseData(docSnap.data().text || initialDataText);
-    renderEditPanel();
-    renderTable();
-    updateDataBox();
-    setStatus("Firebase接続OK：リアルタイム反映中");
-  } else {
-    setStatus("Firebase接続OK：まだデータなし。初期データに戻すボタンで作成できます");
-  }
-}, (error) => {
-  console.error(error);
-  setStatus("Firebase接続エラー：Firestoreルールかプロジェクト設定を確認してください");
+html+="</tr>";
 });
+document.getElementById("table").innerHTML=html;
+}
+
+window.edit=(name,day)=>{
+if(!editing)return;
+let v=prompt("シフト",data[name][day]||"");
+if(v===null)return;
+data[name][day]=v;
+save();
+}
+
+function save(){
+setDoc(ref,{data:data});
+}
+
+onSnapshot(ref,(snap)=>{
+if(snap.exists()){
+data=snap.data().data;
+document.getElementById("status").innerText="接続OK";
+render();
+}
+});
+
+window.unlockEdit=()=>{
+if(prompt("パスワード")==="1234"){
+editing=true;
+alert("編集ON");
+}
+}
+
+window.resetData=()=>{
+data={
+"小田嶋":{},
+"棚倉":{},
+"能見":{},
+"千ヶ崎":{},
+"池本":{}
+};
+save();
+}
 </script>
+
 </body>
 </html>
+```
